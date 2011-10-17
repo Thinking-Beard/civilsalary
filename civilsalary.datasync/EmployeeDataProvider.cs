@@ -35,20 +35,42 @@ namespace civilsalary.datasync
 
     public abstract class EmployeeDataProviderEnumerator : IEnumerator<EmployeeRow>
     {
+        protected bool IsDisposed { get; private set; }
+
+        protected EmployeeDataProviderEnumerator()
+        {
+            IsDisposed = false;
+        }
+
         public abstract EmployeeRow Current { get; }
         
-        public virtual void Dispose() { }
+        public void Dispose() { }
 
         object System.Collections.IEnumerator.Current
         {
-            get { return this.Current; }
+            get 
+            {
+                if (IsDisposed) throw new ObjectDisposedException(null);
+
+                return this.Current; 
+            }
         }
 
         public abstract bool MoveNext();
 
         public void Reset()
         {
+            if (IsDisposed) throw new ObjectDisposedException(null);
+
             throw new NotImplementedException();
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                IsDisposed = true;
+            }
         }
     }
 }
