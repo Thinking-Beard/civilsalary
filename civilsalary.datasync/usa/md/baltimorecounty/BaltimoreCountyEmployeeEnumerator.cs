@@ -75,7 +75,7 @@ namespace civilsalary.datasync.usa.md.baltimorecounty
                 Name = cols[1] + ", " + cols[0],
                 Department = cols[2],
                 Position = cols[3],
-                Salary = double.Parse(cols[4], NumberStyles.AllowCurrencySymbol 
+                Salary = decimal.Parse(cols[4], NumberStyles.AllowCurrencySymbol 
                     | NumberStyles.AllowDecimalPoint 
                     | NumberStyles.AllowLeadingSign 
                     | NumberStyles.AllowParentheses 

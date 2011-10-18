@@ -72,17 +72,17 @@ namespace civilsalary.datasync.usa.md.baltimorecity
                     ExternalId = (string) currentValues[ColumnIndex("id")],
                     Department = (string) currentValues[ColumnIndex("agency")],
                     Position = (string) currentValues[ColumnIndex("jobtitle")],
-                    Salary = double.Parse((string)currentValues[ColumnIndex("annualsalary")], NumberStyles.AllowCurrencySymbol 
+                    Salary = decimal.Parse((string)currentValues[ColumnIndex("annualsalary")], NumberStyles.AllowCurrencySymbol 
                         | NumberStyles.AllowDecimalPoint 
                         | NumberStyles.AllowLeadingSign 
                         | NumberStyles.AllowParentheses 
                         | NumberStyles.AllowThousands),
-                    GrossPay = double.Parse((string)currentValues[ColumnIndex("grosspay")], NumberStyles.AllowCurrencySymbol 
+                    GrossPay = decimal.Parse((string)currentValues[ColumnIndex("grosspay")], NumberStyles.AllowCurrencySymbol 
                         | NumberStyles.AllowDecimalPoint 
                         | NumberStyles.AllowLeadingSign 
                         | NumberStyles.AllowParentheses 
                         | NumberStyles.AllowThousands),
-                    HireDate = DateTime.Parse((string)currentValues[ColumnIndex("hiredate")])
+                    HireDate = (string) currentValues[ColumnIndex("hiredate")] == null ? (DateTime?) null : DateTime.Parse((string)currentValues[ColumnIndex("hiredate")])
                 };
 
                 return true;

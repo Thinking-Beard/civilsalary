@@ -20,13 +20,8 @@ namespace civilsalary.datasync.ui
 
         private void button1_Click(object sender, EventArgs e)
         {
-            //var data = new EmployeeDataProvider(typeof(BaltimoreCountyEmployeeEnumerator));
-            var data = new EmployeeDataProvider(typeof(BaltimoreCityEmployeeEnumerator));
-
-            foreach (var employee in data)
-            {
-                Console.WriteLine("{0} ({1}:{2}) - {3}", employee.Name, employee.Department, employee.Position, employee.Salary);
-            }
+            Importer.Import(new EmployeeDataProvider(typeof(BaltimoreCountyEmployeeEnumerator))
+                , new EmployeeDataProvider(typeof(BaltimoreCityEmployeeEnumerator)));
         }
     }
 }

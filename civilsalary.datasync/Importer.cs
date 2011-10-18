@@ -8,7 +8,7 @@ namespace civilsalary.datasync
 {
     public static class Importer
     {
-        public void Import(params EmployeeDataProvider[] providers)
+        public static void Import(params EmployeeDataProvider[] providers)
         {
             foreach (var p in providers)
             {
