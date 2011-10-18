@@ -9,20 +9,23 @@ namespace civilsalary.datasync
     public sealed class EmployeeDataProvider : IEnumerable<EmployeeRow>
     {
         Type _t;
+        string _key;
 
-        public EmployeeDataProvider(string typeName)
+        public EmployeeDataProvider(string governmentKey, string typeName)
         {
+            _key = governmentKey;
             _t = Type.GetType(typeName);
         }
 
-        public EmployeeDataProvider(Type t)
+        public EmployeeDataProvider(string governmentKey, Type t)
         {
+            _key = governmentKey;
             _t = t;
         }
 
         public IEnumerator<EmployeeRow> GetEnumerator()
         {
-            var instance = (IEnumerator<EmployeeRow>) Activator.CreateInstance(_t);
+            var instance = (IEnumerator<EmployeeRow>) Activator.CreateInstance(_t, _key);
 
             return instance;
         }
@@ -31,6 +34,8 @@ namespace civilsalary.datasync
         {
             return this.GetEnumerator();
         }
+
+        public string GovernmentKey { get; private set; }
     }
 
     public abstract class EmployeeDataProviderEnumerator : IEnumerator<EmployeeRow>

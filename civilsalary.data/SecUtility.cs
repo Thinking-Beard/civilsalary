@@ -16,9 +16,8 @@
 
     internal static class SecUtility
     {
-        internal static readonly DateTime MinSupportedDateTime = DateTime.FromFileTime(0).ToUniversalTime().AddYears(200);
+        //internal static readonly DateTime MinSupportedDateTime = DateTime.FromFileTime(0).ToUniversalTime().AddYears(200);
         internal const int Infinite = Int32.MaxValue;
-
         //internal static readonly string ValidTableNameRegex = @"^([a-zA-Z])([a-zA-Z]|\d){2,62}$";
         //internal static readonly string ValidContainerNameRegex = @"^([a-z]|\d)([a-z]|\d|-(?!\-)){1,61}([a-z]|\d)$";
 
@@ -39,6 +38,18 @@
 
         //    return true;
         //}
+
+        internal static void CheckKeys<T>(IEnumerable<T> links, string paramName) where T : IKeyed, IHierarchicalEnumerable<T>
+        {
+            var flatKeys = links.Flatten().Select(l => l.Item.Key).ToList();
+
+            foreach (var k in flatKeys)
+            {
+                CheckKey(k, false, paramName);
+            }
+
+            if (flatKeys.Count != flatKeys.Distinct().Count()) throw new ArgumentException("All keys must be unique", paramName);
+        }
 
         internal static void CheckKey(string key)
         {
@@ -112,23 +123,23 @@
         //    }
         //}
 
-        internal static void SetUtcTime(DateTime value, out DateTime res)
-        {
-            res = MinSupportedDateTime;
-            if ((value.Kind == DateTimeKind.Local && value.ToUniversalTime() < MinSupportedDateTime) ||
-                 value < MinSupportedDateTime)
-            {
-                throw new ArgumentException("Invalid time value!");
-            }
-            if (value.Kind == DateTimeKind.Local)
-            {
-                res = value.ToUniversalTime();
-            }
-            else
-            {
-                res = value;
-            }
-        }
+        //internal static void SetUtcTime(DateTime value, out DateTime res)
+        //{
+        //    res = MinSupportedDateTime;
+        //    if ((value.Kind == DateTimeKind.Local && value.ToUniversalTime() < MinSupportedDateTime) ||
+        //         value < MinSupportedDateTime)
+        //    {
+        //        throw new ArgumentException("Invalid time value!");
+        //    }
+        //    if (value.Kind == DateTimeKind.Local)
+        //    {
+        //        res = value.ToUniversalTime();
+        //    }
+        //    else
+        //    {
+        //        res = value;
+        //    }
+        //}
 
         //internal static bool IsValidTableName(string name)
         //{

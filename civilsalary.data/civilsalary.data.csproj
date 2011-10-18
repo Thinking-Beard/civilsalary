@@ -44,10 +44,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AzureRepository.cs" />
     <Compile Include="Blob\BlobProvider.cs" />
+    <Compile Include="StringExtensions.cs" />
+    <Compile Include="Table\AggregateRow.cs" />
+    <Compile Include="Table\GovernmentRow.cs" />
+    <Compile Include="IHierarchicalEnumerable.cs" />
+    <Compile Include="IKeyed.cs" />
     <Compile Include="IRepository.cs" />
+    <Compile Include="LinqExtensions.cs" />
     <Compile Include="RequestCache.cs" />
-    <Compile Include="Table\CivilSalaryTableServiceContext.cs" />
     <Compile Include="Table\DepartmentRow.cs" />
     <Compile Include="Table\EmployeeRow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

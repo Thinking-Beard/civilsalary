@@ -18,6 +18,12 @@ namespace civilsalary.datasync.usa.md.baltimorecity
         JsonReader _reader;
         dynamic _view;
         EmployeeRow _current;
+        string _government;
+
+        public BaltimoreCityEmployeeEnumerator(string government)
+        {
+            _government = government;
+        }
 
         public override EmployeeRow Current
         {
@@ -67,11 +73,11 @@ namespace civilsalary.datasync.usa.md.baltimorecity
 
                 _current = new EmployeeRow()
                 {
-                    Government = "usa-md-baltimorecity",
-                    Name = (string)currentValues[ColumnIndex("name")],
-                    ExternalId = (string) currentValues[ColumnIndex("id")],
-                    Department = (string) currentValues[ColumnIndex("agency")],
-                    Position = (string) currentValues[ColumnIndex("jobtitle")],
+                    Government = _government,
+                    Name = ((string)currentValues[ColumnIndex("name")]).Trim().Trim(','),
+                    ExternalId = ((string) currentValues[ColumnIndex("id")]).Trim(),
+                    Department = ((string)currentValues[ColumnIndex("agency")]).Trim(),
+                    Position = ((string) currentValues[ColumnIndex("jobtitle")]).Trim(),
                     Salary = decimal.Parse((string)currentValues[ColumnIndex("annualsalary")], NumberStyles.AllowCurrencySymbol 
                         | NumberStyles.AllowDecimalPoint 
                         | NumberStyles.AllowLeadingSign 

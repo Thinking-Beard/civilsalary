@@ -15,6 +15,12 @@ namespace civilsalary.datasync.usa.md.baltimorecounty
     {
         StringReader _sr;
         EmployeeRow _current;
+        string _government;
+
+        public BaltimoreCountyEmployeeEnumerator(string government)
+        {
+            _government = government;
+        }
         
         public override EmployeeRow Current
         {
@@ -71,10 +77,10 @@ namespace civilsalary.datasync.usa.md.baltimorecounty
 
             _current = new EmployeeRow()
             {
-                Government = "usa-md-baltimorecounty",
-                Name = cols[1] + ", " + cols[0],
-                Department = cols[2],
-                Position = cols[3],
+                Government = _government,
+                Name = (cols[1] + ", " + cols[0]).Trim().Trim(','),
+                Department = cols[2].Trim(),
+                Position = cols[3].Trim(),
                 Salary = decimal.Parse(cols[4], NumberStyles.AllowCurrencySymbol 
                     | NumberStyles.AllowDecimalPoint 
                     | NumberStyles.AllowLeadingSign 

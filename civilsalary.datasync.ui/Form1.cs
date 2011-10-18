@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using civilsalary.datasync.usa.md.baltimorecity;
 using civilsalary.datasync.usa.md.baltimorecounty;
+using civilsalary.data;
 
 namespace civilsalary.datasync.ui
 {
@@ -20,8 +21,9 @@ namespace civilsalary.datasync.ui
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Importer.Import(new EmployeeDataProvider(typeof(BaltimoreCountyEmployeeEnumerator))
-                , new EmployeeDataProvider(typeof(BaltimoreCityEmployeeEnumerator)));
+            var repo = new AzureRepository();
+
+            Importer.Import(repo);
         }
     }
 }
