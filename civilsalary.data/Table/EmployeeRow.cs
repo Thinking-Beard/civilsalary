@@ -30,8 +30,6 @@ namespace civilsalary.data
             {
                 if (value != null && value.Value < SecUtility.MinSupportedDateTime) throw new ArgumentOutOfRangeException("value");
 
-                if(value != null) Console.WriteLine(value);
-
                 _hire = value;
             }
         }

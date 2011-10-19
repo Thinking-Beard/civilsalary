@@ -61,11 +61,7 @@ namespace civilsalary.data
 
         public void SaveGovernments(ICollection<GovernmentRow> rows)
         {
-            var ctx = CreateContext();
-
-            ctx.AddOrUpdateObjects(GovernmentsTable, rows);
-
-            ctx.SaveChanges();
+            BulkSave(GovernmentsTable, rows);
         }
 
         public void AddParentChildGovernmentAssociation(string parentKey, string childKey)
@@ -101,28 +97,77 @@ namespace civilsalary.data
             return ctx.LoadObject<GovernmentRow>(GovernmentsTable, SecUtility.EscapeKey(key), string.Empty);
         }
 
-        public void SaveDepartments(ICollection<DepartmentRow> departments, SaveChangesOptions options)
+        public void SaveDepartments(ICollection<DepartmentRow> departments)
         {
-            var ctx = CreateContext();
-
-            ctx.AddOrUpdateObjects(DepartmentsTable, departments);
-
-            ctx.SaveChanges(options);
+            BulkSave(DepartmentsTable, departments);
         }
 
-        public void SaveEmployees(ICollection<EmployeeRow> employees, SaveChangesOptions options)
+        public void SaveEmployees(ICollection<EmployeeRow> employees)
         {
-            var ctx = CreateContext();
+            BulkSave(EmployeesTable, employees);
+        }
 
-            foreach (var e in employees)
+        void BulkSave<T>(string entitySetName, ICollection<T> entities) where T : TableServiceEntity
+        {
+            BulkSave<T>(entitySetName, entities, 100);
+        }
+
+        void BulkSave<T>(string entitySetName, ICollection<T> entities, int batchSize) where T : TableServiceEntity
+        {
+            if(batchSize > 100) throw new ArgumentOutOfRangeException("batchSize");
+
+            if (entities.Count <= batchSize * 2)
             {
-                ctx.AddOrUpdateObject(EmployeesTable, e);
-                ctx.SaveChanges();
+                var ctx = CreateContext();
+                ctx.AddOrUpdateObjects(entitySetName, entities);
+                ctx.SaveChanges(SaveChangesOptions.None);
+
+                return;
             }
 
-            //ctx.AddOrUpdateObjects(EmployeesTable, employees);
+            //more than 200, see if its possible to batch
+            foreach (var g in entities.GroupBy(e => e.PartitionKey))
+            {
+                var group = g.ToList();
 
-            //ctx.SaveChanges(options);
+                if (group.Count > batchSize * 2)
+                {
+                    //TODO: parallel?
+                    foreach (var batch in group.Batch(batchSize, x => x.ToList()))
+                    {
+                        var ctx = CreateContext();
+
+                        var existing = ctx.LoadObjects<T>(entitySetName, batch.Select(e => Tuple.Create(e.PartitionKey, e.RowKey)));
+
+                        //AddOrUpdate does not work for batch...
+                        var joined = from b in batch
+                                     join e in existing on new { b.PartitionKey, b.RowKey } equals new { e.PartitionKey, e.RowKey } into existingGroup
+                                     from e in existingGroup.DefaultIfEmpty()
+                                     select new { toSave = b, existing = e };
+
+                        foreach (var j in joined)
+                        {
+                            if (j.existing != null)
+                            {
+                                ctx.AttachTo(entitySetName, j.toSave);
+                                ctx.UpdateObject(j.toSave);
+                            }
+                            else
+                            {
+                                ctx.AddObject(entitySetName, j.toSave);
+                            }
+                        }
+
+                        ctx.SaveChanges(SaveChangesOptions.Batch);
+                    }
+                }
+                else
+                {
+                    var ctx = CreateContext();
+                    ctx.AddOrUpdateObjects(entitySetName, group);
+                    ctx.SaveChanges(SaveChangesOptions.None);
+                }
+            }
         }
     }
 }

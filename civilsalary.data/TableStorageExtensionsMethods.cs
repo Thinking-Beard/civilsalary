@@ -10,18 +10,11 @@ namespace civilsalary.data
 {
     static class TableStorageExtensionsMethods
     {
-        public static void AddOrUpdateObjects<T>(this TableServiceContext context, string entitySetName, ICollection<T> entities) where T : TableServiceEntity
+        public static void AddOrUpdateObjects(this TableServiceContext context, string entitySetName, IEnumerable<object> entities)
         {
-            var existing = LoadObjects<T>(context, entitySetName, entities.Select(e => Tuple.Create(e.PartitionKey, e.RowKey)));
-
-            var joined = from entity in entities
-                         join exist in existing on new { entity.PartitionKey, entity.RowKey } equals new { exist.PartitionKey, exist.RowKey } into joinedExisting
-                         from exist in joinedExisting.DefaultIfEmpty()
-                         select new { entity, existing = exist };
-
-            foreach (var j in joined)
+            foreach (var e in entities)
             {
-                AddOrUpdateObjectInternal<T>(context, entitySetName, j.entity, j.existing);
+                AddOrUpdateObjectInternal(context, entitySetName, e);
             }
         }
 
@@ -62,36 +55,16 @@ namespace civilsalary.data
             return context.CreateQuery<T>(entitySetName).Where(e => 1 == 1 && e.PartitionKey == partitionKey && e.RowKey == rowKey).SingleOrDefault();
         }
 
-        public static void AddOrUpdateObject<T>(this TableServiceContext context, string entitySetName, T entity) where T : TableServiceEntity
+        public static void AddOrUpdateObject(this TableServiceContext context, string entitySetName, object entity)
         {
-            var existingObject = LoadObject<T>(context, entitySetName, entity.PartitionKey, entity.RowKey);
-
-            AddOrUpdateObjectInternal<T>(context, entitySetName, entity, existingObject);
+            AddOrUpdateObjectInternal(context, entitySetName, entity);
         }
 
-        static void AddOrUpdateObjectInternal<T>(this TableServiceContext context, string entitySetName, T entity, T existingEntity) where T : TableServiceEntity
+        static void AddOrUpdateObjectInternal(this TableServiceContext context, string entitySetName, object entity)
         {
-            if (existingEntity == null)
-            {
-                context.AddObject(entitySetName, entity);
-            }
-            else
-            {
-                var properties = from p in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.Instance)
-                                 where !string.Equals(p.Name, "RowKey", StringComparison.Ordinal)
-                                 && !string.Equals(p.Name, "PartitionKey", StringComparison.Ordinal)
-                                 && !string.Equals(p.Name, "Timestamp", StringComparison.Ordinal)
-                                 select p;
-
-                foreach (var p in properties)
-                {
-                    //copy value
-                    p.SetValue(existingEntity, p.GetValue(entity, null), null);
-                }
-
-                //existingObject.Timestamp = entity.Timestamp;
-                context.UpdateObject(existingEntity);
-            }
+            context.Detach(entity);
+            context.AttachTo(entitySetName, entity, "*");
+            context.UpdateObject(entity);
         }
 
         public static bool CreateTableIfNotExist<T>(this CloudTableClient tableStorage, string entityName) where T : TableServiceEntity, new()

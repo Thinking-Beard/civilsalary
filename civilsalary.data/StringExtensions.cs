@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace civilsalary.data
 {
@@ -9,7 +10,14 @@ namespace civilsalary.data
     {
         public static string ToUrlValue(this string s)
         {
-            return s.Replace(' ', '-').ToLowerInvariant();
+            var urlValue = Regex.Replace(s.ToLowerInvariant(), @"[^a-z0-9\-]", "-");
+
+            while (urlValue.Contains("--"))
+            {
+                urlValue = urlValue.Replace("--", "-");
+            }
+
+            return urlValue;
         }
     }
 }

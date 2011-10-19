@@ -12,9 +12,10 @@ namespace civilsalary.data
         void SaveGovernments(ICollection<GovernmentRow> governmentRow);
         void AddParentChildGovernmentAssociation(string parentKey, string childKey);
         void AddAdjacentGovernmentAssocation(string keyX, string keyY);
-        GovernmentRow LoadGovernment(string key);
-        void SaveDepartments(ICollection<DepartmentRow> departments, SaveChangesOptions options);
-        void SaveEmployees(ICollection<EmployeeRow> employees, SaveChangesOptions options);
+        GovernmentRow LoadGovernment(string governmentKey);
+        void SaveDepartments(ICollection<DepartmentRow> departments);
+        void SaveEmployees(ICollection<EmployeeRow> employees);
+        DepartmentRow LoadDepartment(string governmentKey, string departmentKey);
     }
 
     public static class IRepositoryExtensions

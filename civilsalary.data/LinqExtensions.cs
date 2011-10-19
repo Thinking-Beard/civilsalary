@@ -10,6 +10,45 @@ namespace civilsalary.data
 {
     public static class LinqExtensions
     {
+        //Batching code similar to MoreLinq implementation
+        public static IEnumerable<TResult> Batch<TSource,TResult>(this IEnumerable<TSource> source, int size, Func<IEnumerable<TSource>, TResult> resultSelector)
+        {
+            return BatchImpl(source, size, resultSelector);
+        }
+
+        public static IEnumerable<IEnumerable<TSource>> Batch<TSource>(this IEnumerable<TSource> source, int size)
+        {
+            return Batch(source, size, x => x);
+        }
+
+        private static IEnumerable<TResult> BatchImpl<TSource, TResult>(this IEnumerable<TSource> source, int size, Func<IEnumerable<TSource>, TResult> resultSelector)
+        {
+            TSource[] bucket = null;
+            var count = 0;
+
+            foreach (var item in source)
+            {
+                if (bucket == null)
+                    bucket = new TSource[size];
+
+                bucket[count++] = item;
+
+                // The bucket is fully buffered before it's yielded
+                if (count != size)
+                    continue;
+
+                // Select is necessary so bucket contents are streamed too
+                yield return resultSelector(bucket.Select(x => x));
+
+                bucket = null;
+                count = 0;
+            }
+
+            // Return the last bucket with all remaining elements
+            if (bucket != null && count > 0)
+                yield return resultSelector(bucket.Take(count));
+        }
+
         //TODO: performance enhancement for this?
         /// <summary>
         /// This method flattens the hierarchical object graph by depth ascending.
