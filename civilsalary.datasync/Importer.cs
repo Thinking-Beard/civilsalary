@@ -11,6 +11,11 @@ namespace civilsalary.datasync
 {
     public static class Importer
     {
+        const string Key_US = "us";
+        const string Key_US_MD = "us/md";
+        const string Key_US_MD_BaltimoreCity = "us/md/baltimore-city";
+        const string Key_US_MD_BaltimoreCounty = "us/md/baltimore-county";
+
         public static void Import(IRepository repository)
         {
             //setup governments
@@ -18,37 +23,37 @@ namespace civilsalary.datasync
             repository.SaveGovernments(new GovernmentRow[] {
                 new GovernmentRow()
                 {
-                    Key = "usa",
+                    Key = Key_US,
                     Name = "United States Federal"
                 },
                 new GovernmentRow()
                 {
-                    Key = "usa-md",
+                    Key = Key_US_MD,
                     Name = "Maryland State"
                 },
                 new GovernmentRow()
                 {
-                    Key = "usa-md-baltimorecity",
+                    Key = Key_US_MD_BaltimoreCity,
                     Name = "Baltimore City"
                 },
                 new GovernmentRow()
                 {
-                    Key = "usa-md-baltimorecounty",
+                    Key = Key_US_MD_BaltimoreCounty,
                     Name = "Baltimore County"
                 }
             });
 
 
-            repository.AddParentChildGovernmentAssociation("usa", "usa-md");
-            repository.AddParentChildGovernmentAssociation("usa-md", "usa-md-baltimorecity");
-            repository.AddParentChildGovernmentAssociation("usa-md", "usa-md-baltimorecounty");
+            repository.AddParentChildGovernmentAssociation(Key_US, Key_US_MD);
+            repository.AddParentChildGovernmentAssociation(Key_US_MD, Key_US_MD_BaltimoreCity);
+            repository.AddParentChildGovernmentAssociation(Key_US_MD, Key_US_MD_BaltimoreCounty);
 
-            repository.AddAdjacentGovernmentAssocation("usa-md-baltimorecity", "usa-md-baltimorecounty");
+            repository.AddAdjacentGovernmentAssocation(Key_US_MD_BaltimoreCity, Key_US_MD_BaltimoreCounty);
 
-            //var providers = new EmployeeDataProvider[] { new EmployeeDataProvider("usa-md-baltimorecounty", typeof(BaltimoreCountyEmployeeEnumerator))
-            //    , new EmployeeDataProvider("usa-md-baltimorecity", typeof(BaltimoreCityEmployeeEnumerator)) };
+            //var providers = new EmployeeDataProvider[] { new EmployeeDataProvider(Key_US_MD_BaltimoreCounty, typeof(BaltimoreCountyEmployeeEnumerator))
+            //    , new EmployeeDataProvider(Key_US_MD_BaltimoreCity, typeof(BaltimoreCityEmployeeEnumerator)) };
 
-            var providers = new EmployeeDataProvider[] { new EmployeeDataProvider("usa-md-baltimorecity", typeof(BaltimoreCityEmployeeEnumerator)) };
+            var providers = new EmployeeDataProvider[] { new EmployeeDataProvider(Key_US_MD_BaltimoreCity, typeof(BaltimoreCityEmployeeEnumerator)) };
 
             foreach (var p in providers)
             {
@@ -86,9 +91,9 @@ namespace civilsalary.datasync
                     return department;
                 }).ToList();
 
-                repository.SaveDepartments(departments, SaveChangesOptions.Batch);
+                repository.SaveDepartments(departments);
 
-                repository.SaveEmployees(employees, SaveChangesOptions.Batch);
+                repository.SaveEmployees(employees);
             }
         }
     }

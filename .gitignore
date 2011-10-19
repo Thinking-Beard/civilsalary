@@ -1,0 +1,17 @@
+
+/civilsalary.azure/bin
+/civilsalary.azure/obj
+/civilsalary.web/bin
+/civilsalary.web/obj
+/civilsalary.datasync/bin
+/civilsalary.datasync/obj
+/civilsalary.datasync.ui/bin
+/civilsalary.datasync.ui/obj
+/civilsalary.data/bin
+/civilsalary.data/obj
+/civilsalary.azure/civilsalary.azure.ccproj.user
+/civilsalary.data/civilsalary.data.csproj.user
+/civilsalary.datasync/civilsalary.datasync.csproj.user
+/civilsalary.sln.docstates.suo
+/civilsalary.suo
+/civilsalary.web/civilsalary.web.csproj.user
