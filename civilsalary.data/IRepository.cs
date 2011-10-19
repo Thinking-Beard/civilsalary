@@ -2,18 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Data.Services.Client;
 
 namespace civilsalary.data
 {
     public interface IRepository
     {
         IQueryable<GovernmentRow> LoadGovernments();
-        void SaveGovernments(IEnumerable<GovernmentRow> governmentRow);
+        void SaveGovernments(ICollection<GovernmentRow> governmentRow);
         void AddParentChildGovernmentAssociation(string parentKey, string childKey);
         void AddAdjacentGovernmentAssocation(string keyX, string keyY);
         GovernmentRow LoadGovernment(string key);
-        void SaveDepartments(IEnumerable<DepartmentRow> departments);
-        void SaveEmployees(IEnumerable<EmployeeRow> employees);
+        void SaveDepartments(ICollection<DepartmentRow> departments, SaveChangesOptions options);
+        void SaveEmployees(ICollection<EmployeeRow> employees, SaveChangesOptions options);
     }
 
     public static class IRepositoryExtensions

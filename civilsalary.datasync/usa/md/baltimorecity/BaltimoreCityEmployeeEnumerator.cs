@@ -17,7 +17,7 @@ namespace civilsalary.datasync.usa.md.baltimorecity
 
         JsonReader _reader;
         dynamic _view;
-        EmployeeRow _current;
+        EmployeeData _current;
         string _government;
 
         public BaltimoreCityEmployeeEnumerator(string government)
@@ -25,7 +25,7 @@ namespace civilsalary.datasync.usa.md.baltimorecity
             _government = government;
         }
 
-        public override EmployeeRow Current
+        public override EmployeeData Current
         {
             get { return _current; }
         }
@@ -71,24 +71,27 @@ namespace civilsalary.datasync.usa.md.baltimorecity
             {
                 var currentValues = JArray.Load(_reader);
 
-                _current = new EmployeeRow()
+                _current = new EmployeeData()
                 {
-                    Government = _government,
-                    Name = ((string)currentValues[ColumnIndex("name")]).Trim().Trim(','),
-                    ExternalId = ((string) currentValues[ColumnIndex("id")]).Trim(),
-                    Department = ((string)currentValues[ColumnIndex("agency")]).Trim(),
-                    Position = ((string) currentValues[ColumnIndex("jobtitle")]).Trim(),
-                    Salary = decimal.Parse((string)currentValues[ColumnIndex("annualsalary")], NumberStyles.AllowCurrencySymbol 
-                        | NumberStyles.AllowDecimalPoint 
-                        | NumberStyles.AllowLeadingSign 
-                        | NumberStyles.AllowParentheses 
-                        | NumberStyles.AllowThousands),
-                    GrossPay = decimal.Parse((string)currentValues[ColumnIndex("grosspay")], NumberStyles.AllowCurrencySymbol 
-                        | NumberStyles.AllowDecimalPoint 
-                        | NumberStyles.AllowLeadingSign 
-                        | NumberStyles.AllowParentheses 
-                        | NumberStyles.AllowThousands),
-                    HireDate = (string) currentValues[ColumnIndex("hiredate")] == null ? (DateTime?) null : DateTime.Parse((string)currentValues[ColumnIndex("hiredate")])
+                    DepartmentName = ((string)currentValues[ColumnIndex("agency")]).Trim(),
+                    Row = new EmployeeRow()
+                    {
+                        GovernmentKey = _government,
+                        Name = ((string)currentValues[ColumnIndex("name")]).Trim().Trim(','),
+                        EmployeeId = ((string)currentValues[ColumnIndex("id")]).Trim(),
+                        Position = ((string)currentValues[ColumnIndex("jobtitle")]).Trim(),
+                        Salary = double.Parse((string)currentValues[ColumnIndex("annualsalary")], NumberStyles.AllowCurrencySymbol
+                            | NumberStyles.AllowDecimalPoint
+                            | NumberStyles.AllowLeadingSign
+                            | NumberStyles.AllowParentheses
+                            | NumberStyles.AllowThousands),
+                        GrossPay = double.Parse((string)currentValues[ColumnIndex("grosspay")], NumberStyles.AllowCurrencySymbol
+                            | NumberStyles.AllowDecimalPoint
+                            | NumberStyles.AllowLeadingSign
+                            | NumberStyles.AllowParentheses
+                            | NumberStyles.AllowThousands),
+                        HireDate = (string)currentValues[ColumnIndex("hiredate")] == null ? (DateTime?)null : DateTime.Parse((string)currentValues[ColumnIndex("hiredate")])
+                    }
                 };
 
                 return true;

@@ -6,7 +6,7 @@ using civilsalary.data;
 
 namespace civilsalary.datasync
 {
-    public sealed class EmployeeDataProvider : IEnumerable<EmployeeRow>
+    public sealed class EmployeeDataProvider : IEnumerable<EmployeeData>
     {
         Type _t;
         string _key;
@@ -23,9 +23,9 @@ namespace civilsalary.datasync
             _t = t;
         }
 
-        public IEnumerator<EmployeeRow> GetEnumerator()
+        public IEnumerator<EmployeeData> GetEnumerator()
         {
-            var instance = (IEnumerator<EmployeeRow>) Activator.CreateInstance(_t, _key);
+            var instance = (IEnumerator<EmployeeData>)Activator.CreateInstance(_t, _key);
 
             return instance;
         }
@@ -35,10 +35,16 @@ namespace civilsalary.datasync
             return this.GetEnumerator();
         }
 
-        public string GovernmentKey { get; private set; }
+        public string GovernmentKey 
+        { 
+            get 
+            { 
+                return _key; 
+            } 
+        }
     }
 
-    public abstract class EmployeeDataProviderEnumerator : IEnumerator<EmployeeRow>
+    public abstract class EmployeeDataProviderEnumerator : IEnumerator<EmployeeData>
     {
         protected bool IsDisposed { get; private set; }
 
@@ -47,7 +53,7 @@ namespace civilsalary.datasync
             IsDisposed = false;
         }
 
-        public abstract EmployeeRow Current { get; }
+        public abstract EmployeeData Current { get; }
         
         public void Dispose() { }
 

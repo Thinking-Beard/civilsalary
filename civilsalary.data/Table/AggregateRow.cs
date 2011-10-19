@@ -9,16 +9,16 @@ namespace civilsalary.data
     public abstract class AggregateRow : TableServiceEntity
     {
         public int EmployeeCount { get; set; }
-        public decimal? SalarySum { get; set; }
-        public decimal? SalaryMax { get; set; }
-        public decimal? SalaryMin { get; set; }
-        public decimal? SalaryAvg { get; set; }
-        public decimal? SalaryMed { get; set; }
-        public decimal? GrossPaySum { get; set; }
-        public decimal? GrossPayMax { get; set; }
-        public decimal? GrossPayMin { get; set; }
-        public decimal? GrossPayAvg { get; set; }
-        public decimal? GrossPayMed { get; set; }
+        public double? SalarySum { get; set; }
+        public double? SalaryMax { get; set; }
+        public double? SalaryMin { get; set; }
+        public double? SalaryAvg { get; set; }
+        public double? SalaryMed { get; set; }
+        public double? GrossPaySum { get; set; }
+        public double? GrossPayMax { get; set; }
+        public double? GrossPayMin { get; set; }
+        public double? GrossPayAvg { get; set; }
+        public double? GrossPayMed { get; set; }
     }
 
     public static class AggregateRowExtensions

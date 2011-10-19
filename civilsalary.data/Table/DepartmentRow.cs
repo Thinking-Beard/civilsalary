@@ -8,9 +8,41 @@ namespace civilsalary.data
 {
     public sealed class DepartmentRow : AggregateRow, IKeyed
     {
-        public string Key { get; set; }
-        public string Name { get; set; }
+        string _key;
+        string _government;
+
+        public string Key
+        {
+            get
+            {
+                return _key;
+            }
+            set
+            {
+                SecUtility.CheckKey(value);
+
+                _key = value;
+
+                RowKey = SecUtility.EscapeKey(value);
+            }
+        }
+
+        public string GovernmentKey
+        {
+            get
+            {
+                return _government;
+            }
+            set
+            {
+                SecUtility.CheckKey(value);
+
+                _government = value;
+
+                PartitionKey = SecUtility.EscapeKey(value);
+            }
+        }
         
-        public string GovernmentKey { get; set; }
+        public string Name { get; set; }
     }
 }

@@ -16,7 +16,7 @@
 
     internal static class SecUtility
     {
-        //internal static readonly DateTime MinSupportedDateTime = DateTime.FromFileTime(0).ToUniversalTime().AddYears(200);
+        internal static readonly DateTime MinSupportedDateTime = DateTime.FromFileTime(0).ToUniversalTime().AddYears(200);
         internal const int Infinite = Int32.MaxValue;
         //internal static readonly string ValidTableNameRegex = @"^([a-zA-Z])([a-zA-Z]|\d){2,62}$";
         //internal static readonly string ValidContainerNameRegex = @"^([a-z]|\d)([a-z]|\d|-(?!\-)){1,61}([a-z]|\d)$";

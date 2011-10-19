@@ -5,6 +5,7 @@ using System.Text;
 using civilsalary.data;
 using civilsalary.datasync.usa.md.baltimorecounty;
 using civilsalary.datasync.usa.md.baltimorecity;
+using System.Data.Services.Client;
 
 namespace civilsalary.datasync
 {
@@ -44,12 +45,15 @@ namespace civilsalary.datasync
 
             repository.AddAdjacentGovernmentAssocation("usa-md-baltimorecity", "usa-md-baltimorecounty");
 
-            var providers = new EmployeeDataProvider[] { new EmployeeDataProvider("usa-md-baltimorecounty", typeof(BaltimoreCountyEmployeeEnumerator))
-                , new EmployeeDataProvider("usa-md-baltimorecity", typeof(BaltimoreCityEmployeeEnumerator)) };
+            //var providers = new EmployeeDataProvider[] { new EmployeeDataProvider("usa-md-baltimorecounty", typeof(BaltimoreCountyEmployeeEnumerator))
+            //    , new EmployeeDataProvider("usa-md-baltimorecity", typeof(BaltimoreCityEmployeeEnumerator)) };
+
+            var providers = new EmployeeDataProvider[] { new EmployeeDataProvider("usa-md-baltimorecity", typeof(BaltimoreCityEmployeeEnumerator)) };
 
             foreach (var p in providers)
             {
-                var employees = p.ToList();
+                var employeeData = p.ToList();
+                var employees = employeeData.Select(d => d.Row).ToList();
 
                 var g = repository.LoadGovernment(p.GovernmentKey);
 
@@ -57,27 +61,34 @@ namespace civilsalary.datasync
 
                 repository.SaveGovernments(g);
 
-                var departmentGroups = employees.GroupBy(e => e.Department);
+                var departmentGroups = employeeData.GroupBy(e => e.DepartmentName);
 
-                var departments = departmentGroups.Select(d =>
+                var departments = departmentGroups.Select(dept =>
                 {
-                    var departmentEmployees = d.ToList();
+                    var departmentEmployeeData = dept.ToList();
 
                     var department = new DepartmentRow()
                     {
                         GovernmentKey = p.GovernmentKey,
-                        Key = d.Key.ToUrlValue(),
-                        Name = d.Key
+                        Key = dept.Key.ToUrlValue(),
+                        Name = dept.Key
                     };
 
+                    var departmentEmployees = departmentEmployeeData.Select(data => data.Row).ToList();
+
                     department.FillAggregates(departmentEmployees);
+
+                    foreach (var employee in departmentEmployees)
+                    {
+                        employee.DepartmentKey = department.Key;
+                    }
 
                     return department;
                 }).ToList();
 
-                repository.SaveDepartments(departments);
+                repository.SaveDepartments(departments, SaveChangesOptions.Batch);
 
-                repository.SaveEmployees(employees);
+                repository.SaveEmployees(employees, SaveChangesOptions.Batch);
             }
         }
     }

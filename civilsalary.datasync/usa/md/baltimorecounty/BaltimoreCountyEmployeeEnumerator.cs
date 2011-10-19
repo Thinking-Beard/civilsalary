@@ -14,15 +14,15 @@ namespace civilsalary.datasync.usa.md.baltimorecounty
     public sealed class BaltimoreCountyEmployeeEnumerator : EmployeeDataProviderEnumerator
     {
         StringReader _sr;
-        EmployeeRow _current;
+        EmployeeData _current;
         string _government;
 
         public BaltimoreCountyEmployeeEnumerator(string government)
         {
             _government = government;
         }
-        
-        public override EmployeeRow Current
+
+        public override EmployeeData Current
         {
             get 
             {
@@ -75,20 +75,23 @@ namespace civilsalary.datasync.usa.md.baltimorecounty
 
             var cols = current.Split('\t');
 
-            _current = new EmployeeRow()
+            _current = new EmployeeData()
             {
-                Government = _government,
-                Name = (cols[1] + ", " + cols[0]).Trim().Trim(','),
-                Department = cols[2].Trim(),
-                Position = cols[3].Trim(),
-                Salary = decimal.Parse(cols[4], NumberStyles.AllowCurrencySymbol 
-                    | NumberStyles.AllowDecimalPoint 
-                    | NumberStyles.AllowLeadingSign 
-                    | NumberStyles.AllowParentheses 
-                    | NumberStyles.AllowThousands)
+                DepartmentName = cols[2].Trim(),
+                Row = new EmployeeRow()
+                {
+                    GovernmentKey = _government,
+                    Name = (cols[1] + ", " + cols[0]).Trim().Trim(','),
+                    Position = cols[3].Trim(),
+                    Salary = double.Parse(cols[4], NumberStyles.AllowCurrencySymbol
+                        | NumberStyles.AllowDecimalPoint
+                        | NumberStyles.AllowLeadingSign
+                        | NumberStyles.AllowParentheses
+                        | NumberStyles.AllowThousands)
+                }
             };
 
-            _current.ExternalId = _current.Department + "|" + _current.Name;
+            _current.Row.EmployeeId = _current.DepartmentName + "|" + _current.Row.Name;
 
             return true;
         }

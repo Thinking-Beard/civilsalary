@@ -73,7 +73,7 @@ namespace civilsalary.data
             }
         }
 
-        public static decimal? Median<T>(this ICollection<T> list, Func<T, decimal?> valueSelector)
+        public static double? Median<T>(this ICollection<T> list, Func<T, double?> valueSelector)
         {
             if (list == null) throw new ArgumentNullException("list");
             if (valueSelector == null) throw new ArgumentNullException("value");
