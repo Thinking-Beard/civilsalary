@@ -12,6 +12,10 @@ namespace civilsalary.data
         string _key2;
         string _assocation;
 
+        public const string ParentOfType = "Parent";
+        public const string ChildOfType = "Child";
+        public const string AdjacentToType = "Adjacent";
+
         public string Association
         {
             get

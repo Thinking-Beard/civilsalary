@@ -13,7 +13,7 @@
     <RootNamespace>civilsalary.web</RootNamespace>
     <AssemblyName>civilsalary.web</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <MvcBuildViews>false</MvcBuildViews>
+    <MvcBuildViews>true</MvcBuildViews>
     <UseIISExpress>false</UseIISExpress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -44,7 +44,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.WindowsAzure.Diagnostics" />
-    <Reference Include="Microsoft.WindowsAzure.ServiceRuntime" />
+    <Reference Include="Microsoft.WindowsAzure.ServiceRuntime, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.WindowsAzure.StorageClient" />
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -95,11 +95,13 @@
     <Compile Include="App_Start\AttributeRouting.cs" />
     <Compile Include="Controllers\EmployeeController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\StatisticsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\StatisticsDetailModel.cs" />
+    <Compile Include="Models\TreeMapModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WebRole.cs" />
   </ItemGroup>
@@ -171,6 +173,23 @@
       <Project>{1D0EF114-FDE7-4A25-96E4-2F9938C55041}</Project>
       <Name>civilsalary.data</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FluentJson\FluentJson.csproj">
+      <Project>{8040B84D-824B-449E-9F3B-BC557EAD92EB}</Project>
+      <Name>FluentJson</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GoogleVisualization\GoogleVisualization.csproj">
+      <Project>{FBDC3C44-511F-47CA-B6A8-9D2814802B07}</Project>
+      <Name>GoogleVisualization</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Error\General.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Statistics\Detail.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Home\Index.cshtml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
@@ -180,8 +199,8 @@
   </Target>
   <Target Name="AfterBuild">
   </Target> -->
-  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
-    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" Condition="'$(MvcBuildViews)'=='true'" />
   </Target>
   <ProjectExtensions>
     <VisualStudio>

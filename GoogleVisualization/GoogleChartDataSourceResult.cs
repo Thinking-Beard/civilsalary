@@ -5,6 +5,7 @@ using System.Text;
 using System.Web.Mvc;
 using System.Web.Routing;
 using FluentJson;
+using System.Collections;
 
 namespace GoogleVisualization
 {
@@ -32,6 +33,15 @@ namespace GoogleVisualization
         //    : this(data, dataQuery, tqx, new RouteValueDictionary(additionalProperties))
         //{
         //}
+
+        public GoogleChartDataSourceResult(IEnumerable data, Type elementType, string tqx, IDictionary<string, object> additionalProperties)
+        {
+            var parameters = tqx.SplitDictionary(";", ":");
+
+            ReqId = parameters != null && parameters.ContainsKey("reqId") ? parameters["reqId"] : null;
+
+            Data = data.ToGoogleDataTable(elementType, additionalProperties);
+        }
 
         public GoogleChartDataSourceResult(IQueryable data, string dataQuery, string tqx, IDictionary<string, object> additionalProperties)
         {

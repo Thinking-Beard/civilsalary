@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
@@ -68,7 +69,17 @@ namespace GoogleVisualization
             return ToGoogleDataTable(query, null);
         }
 
+        public static GoogleDataTable ToGoogleDataTable<T>(this IEnumerable<T> data, object additionalTableProperties)
+        {
+            return ToGoogleDataTable(data, typeof(T), additionalTableProperties);
+        }
+
         public static GoogleDataTable ToGoogleDataTable(this IQueryable query, object additionalTableProperties)
+        {
+            return ToGoogleDataTable(query, query.ElementType, additionalTableProperties);
+        }
+
+        public static GoogleDataTable ToGoogleDataTable(this IEnumerable data, Type elementType, object additionalTableProperties)
         {
             var t = new GoogleDataTable();
 
@@ -79,7 +90,7 @@ namespace GoogleVisualization
                 t.Custom.Merge(rv);
             }
 
-            var viewData = GetViewDataDictionaryForType(query.ElementType);
+            var viewData = GetViewDataDictionaryForType(elementType);
             var metadata = ModelMetadata.FromStringExpression(string.Empty, viewData);
 
             foreach (var p in metadata.Properties)
@@ -92,7 +103,7 @@ namespace GoogleVisualization
                 });
             }
 
-            foreach (var item in query)
+            foreach (var item in data)
             {
                 var row = new GoogleDataRow();
                 t.Rows.Add(row);

@@ -27,7 +27,8 @@ namespace civilsalary.web
             routes.MapRoute(
                 "CatchAllRoute",
                 "{*url}",
-                new { controller = "Error", "CatchAll" });
+                new { controller = "Error", action = "CatchAll" }
+            );
         }
 
         protected void Application_Error()

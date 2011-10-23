@@ -16,6 +16,8 @@ namespace civilsalary.data
         void SaveDepartments(ICollection<DepartmentRow> departments);
         void SaveEmployees(ICollection<EmployeeRow> employees);
         DepartmentRow LoadDepartment(string governmentKey, string departmentKey);
+        IQueryable<GovernmentAssociationRow> LoadGovernmentAssociations();
+        IQueryable<DepartmentRow> LoadDepartments(string governmentKey);
     }
 
     public static class IRepositoryExtensions

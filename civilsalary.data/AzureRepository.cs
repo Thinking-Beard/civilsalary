@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.WindowsAzure.StorageClient;
 using Microsoft.WindowsAzure;
+using Microsoft.WindowsAzure.ServiceRuntime;
 using System.Configuration;
 using System.Data.Services.Client;
 
@@ -22,13 +23,23 @@ namespace civilsalary.data
         {
             CloudStorageAccount.SetConfigurationSettingPublisher((key, publisher) =>
             {
-                //TODO: azure environment
-
-                var connectionString = ConfigurationManager.ConnectionStrings[key];
-
-                if (connectionString != null)
+                if (RoleEnvironment.IsAvailable)
                 {
-                    publisher(connectionString.ConnectionString);
+                    var roleValue = RoleEnvironment.GetConfigurationSettingValue(key);
+
+                    if (roleValue != null)
+                    {
+                        publisher(roleValue);
+                        return;
+                    }
+                }
+
+                var cs = ConfigurationManager.ConnectionStrings[key];
+
+                if (cs != null)
+                {
+                    publisher(cs.ConnectionString);
+                    return;
                 }
 
                 publisher(ConfigurationManager.AppSettings[key]);
@@ -70,8 +81,8 @@ namespace civilsalary.data
 
             ctx.AddOrUpdateObjects(GovernmentAssocationsTable, new GovernmentAssociationRow[] 
             {
-                new GovernmentAssociationRow() { Association = "Parent", Key1 = parentKey, Key2 = childKey },
-                new GovernmentAssociationRow() { Association = "Child", Key2 = parentKey, Key1 = childKey }
+                new GovernmentAssociationRow() { Association = GovernmentAssociationRow.ParentOfType, Key1 = parentKey, Key2 = childKey },
+                new GovernmentAssociationRow() { Association = GovernmentAssociationRow.ChildOfType, Key2 = parentKey, Key1 = childKey }
             });
 
             ctx.SaveChanges();
@@ -83,8 +94,8 @@ namespace civilsalary.data
 
             ctx.AddOrUpdateObjects(GovernmentAssocationsTable, new GovernmentAssociationRow[] 
             {
-                new GovernmentAssociationRow() { Association = "Adjacent", Key1 = keyX, Key2 = keyY },
-                new GovernmentAssociationRow() { Association = "Adjacent", Key2 = keyX, Key1 = keyY }
+                new GovernmentAssociationRow() { Association = GovernmentAssociationRow.AdjacentToType, Key1 = keyX, Key2 = keyY },
+                new GovernmentAssociationRow() { Association = GovernmentAssociationRow.AdjacentToType, Key2 = keyX, Key1 = keyY }
             });
 
             ctx.SaveChanges();
@@ -139,7 +150,6 @@ namespace civilsalary.data
 
                         var existing = ctx.LoadObjects<T>(entitySetName, batch.Select(e => Tuple.Create(e.PartitionKey, e.RowKey)));
 
-                        //AddOrUpdate does not work for batch...
                         var joined = from b in batch
                                      join e in existing on new { b.PartitionKey, b.RowKey } equals new { e.PartitionKey, e.RowKey } into existingGroup
                                      from e in existingGroup.DefaultIfEmpty()
@@ -168,6 +178,21 @@ namespace civilsalary.data
                     ctx.SaveChanges(SaveChangesOptions.None);
                 }
             }
+        }
+
+        public DepartmentRow LoadDepartment(string governmentKey, string departmentKey)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IQueryable<GovernmentAssociationRow> LoadGovernmentAssociations()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IQueryable<DepartmentRow> LoadDepartments(string governmentKey)
+        {
+            throw new NotImplementedException();
         }
     }
 }

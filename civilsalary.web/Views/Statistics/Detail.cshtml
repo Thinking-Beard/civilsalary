@@ -1,0 +1,33 @@
+﻿@model StatisticsDetailModel
+
+@{
+    ViewBag.Title = "Salary Statistics";
+}
+
+<div id="tree">Loading...</div>
+
+@section ScriptContent 
+{
+    <script src="https://www.google.com/jsapi"></script>
+    <script>
+        google.load("visualization", "1", {packages: ["corechart"]});
+        google.setOnLoadCallback(function () {
+            var query = new google.visualization.Query('/statistics/data/tree');
+            var treeDataTable;
+
+            query.send(function (response) {
+                treeDataTable = response.getDataTable();
+
+                var tree = new google.visualization.TreeMap($('#tree')[0]);
+                tree.draw(data, {
+                    minColor: '#f00',
+                    midColor: '#ddd',
+                    maxColor: '#0d0',
+                    headerHeight: 15,
+                    fontColor: 'black',
+                    showScale: true
+                });
+            });
+        });
+    </script>
+}

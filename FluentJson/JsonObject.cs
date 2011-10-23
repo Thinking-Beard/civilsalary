@@ -4,12 +4,28 @@ using System.Linq;
 using System.Text;
 using System.Web.Script.Serialization;
 using System.Web;
+using Newtonsoft.Json;
+using System.IO;
 
 namespace FluentJson
 {
-    public sealed class JsonObject : IHtmlString, IJsonSerializable
+    [JsonConverter(typeof(JsonObject.Converter))]
+    public sealed class JsonObject : IHtmlString
     {
         Dictionary<string, object> _properties = new Dictionary<string,object>();
+
+        class Converter : JsonConverter<JsonObject>
+        {
+            public override void WriteJson(JsonWriter writer, JsonObject value, JsonSerializer serializer)
+            {
+                serializer.Serialize(writer, value._properties);
+            }
+
+            public override JsonObject ReadJson(JsonReader reader, JsonObject existingValue, JsonSerializer serializer)
+            {
+                throw new NotImplementedException();
+            }
+        }
         
         private JsonObject()
         {
@@ -58,7 +74,9 @@ namespace FluentJson
 
         public string ToJson()
         {
-            return new CustomJsonSerializer().Serialize(_properties);
+            var sw = new StringWriter();
+            new JsonSerializer().Serialize(sw, _properties);
+            return sw.GetStringBuilder().ToString();
         }
 
         string IHtmlString.ToHtmlString()
@@ -69,11 +87,6 @@ namespace FluentJson
         public override string ToString()
         {
             return ToJson();
-        }
-
-        void IJsonSerializable.BuildJson(StringBuilder sb)
-        {
-            new CustomJsonSerializer().Serialize(_properties, sb);
         }
     }
 }

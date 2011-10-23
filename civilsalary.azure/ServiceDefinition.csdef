@@ -1,6 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ServiceDefinition name="civilsalary.azure" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition">
   <WebRole name="civilsalary.web" vmsize="Small">
+    <ConfigurationSettings>
+      <Setting name="CivilSalaryData"/>
+    </ConfigurationSettings>
     <Sites>
       <Site name="Web">
         <Bindings>

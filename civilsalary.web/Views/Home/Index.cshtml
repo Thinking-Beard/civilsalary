@@ -1,0 +1,12 @@
+﻿@model IEnumerable<GovernmentRow>
+
+@{
+    ViewBag.Title = "Civil Salary";
+}
+
+<ul>
+@foreach (var g in Model)
+{ 
+    <li>@g.Name</li>
+}
+</ul>

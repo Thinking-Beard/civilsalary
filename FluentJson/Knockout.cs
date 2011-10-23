@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web.Script.Serialization;
+using Newtonsoft.Json;
 
 namespace FluentJson
 {
@@ -34,37 +35,53 @@ namespace FluentJson
             return json;
         }
 
-        class KnockoutObservableArray : IJsonSerializable
+        [JsonConverter(typeof(KnockoutObservableArray.Converter))]
+        class KnockoutObservableArray
         {
             readonly IEnumerable<object> _array;
+
+            class Converter : JsonConverter<KnockoutObservableArray>
+            {
+                public override void WriteJson(JsonWriter writer, KnockoutObservableArray value, JsonSerializer serializer)
+                {
+                    writer.WriteRaw("ko.observableArray(");
+                    serializer.Serialize(writer, value._array);
+                    writer.WriteRaw(")");
+            }
+
+                public override KnockoutObservableArray ReadJson(JsonReader reader, KnockoutObservableArray existingValue, JsonSerializer serializer)
+            {
+                    throw new NotImplementedException();
+            }
+        }
 
             public KnockoutObservableArray(IEnumerable<object> array)
             {
                 _array = array;
             }
-
-            public void BuildJson(StringBuilder sb)
-            {
-                var serializer = new CustomJsonSerializer();
-                sb.Append("ko.observableArray(");
-                serializer.Serialize(_array, sb);
-                sb.Append(")");
-            }
         }
 
-        class KnockoutObservable : IJsonSerializable
+        [JsonConverter(typeof(KnockoutObservable.Converter))]
+        class KnockoutObservable
         {
             readonly object _value;
 
-            public KnockoutObservable(object value) { _value = value; }
-
-            public void BuildJson(StringBuilder sb)
+            class Converter : JsonConverter<KnockoutObservable>
             {
-                var serializer = new CustomJsonSerializer();
-                sb.Append("ko.observable(");
-                serializer.Serialize(_value, sb);
-                sb.Append(")");
+                public override void WriteJson(JsonWriter writer, KnockoutObservable value, JsonSerializer serializer)
+                {
+                    writer.WriteRaw("ko.observable(");
+                    serializer.Serialize(writer, value._value);
+                    writer.WriteRaw(")");
+                }
+
+                public override KnockoutObservable ReadJson(JsonReader reader, KnockoutObservable existingValue, JsonSerializer serializer)
+            {
+                    throw new NotImplementedException();
             }
+            }
+
+            public KnockoutObservable(object value) { _value = value; }
         }
     }
 }

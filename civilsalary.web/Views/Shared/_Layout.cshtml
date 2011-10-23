@@ -2,14 +2,14 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-
 	<title>@ViewBag.Title</title>
 	<meta name="description" content="@ViewBag.Description">
 	<meta name="author" content="@ViewBag.Author">
-
 	<meta name="viewport" content="width=device-width,initial-scale=1">
 
 	<link rel="stylesheet" href="/content/style.css">
+
+    @RenderSection("StyleContent", false)
 
 	<script src="/scripts/modernizr-2.0.6.min.js"></script>
 </head>
@@ -23,7 +23,7 @@
 		@RenderBody()
 	</div>
 	<footer>
-
+        
 	</footer>
 </div> <!--! end of #container -->
 
@@ -33,8 +33,8 @@
 <!-- scripts concatenated and minified via ant build script-->
 <script src="/scripts/plugins.js"></script>
 <script src="/scripts/script.js"></script>
+@RenderSection("ScriptContent", false)
 <!-- end scripts-->
-
 
 <!--[if lt IE 7 ]>
 	<script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.2/CFInstall.min.js"></script>

@@ -33,6 +33,9 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.4.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
@@ -47,7 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DictionaryExtensions.cs" />
-    <Compile Include="Google Data Types.cs" />
+    <Compile Include="GoogleValue.cs" />
     <Compile Include="GoogleChartDataSourceResult.cs" />
     <Compile Include="GoogleVisualizationExtensions.cs" />
     <Compile Include="GoogleDataTable.cs" />
@@ -56,7 +59,9 @@
     <Compile Include="QueryableExtensions.cs" />
     <Compile Include="QueryResult.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FluentJson\FluentJson.csproj">
       <Project>{8040B84D-824B-449E-9F3B-BC557EAD92EB}</Project>
