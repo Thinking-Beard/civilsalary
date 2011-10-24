@@ -105,7 +105,7 @@ namespace civilsalary.data
         {
             var ctx = CreateContext();
 
-            return ctx.LoadObject<GovernmentRow>(GovernmentsTable, SecUtility.EscapeKey(key), string.Empty);
+            return ctx.LoadObject<GovernmentRow>(GovernmentsTable, SecUtility.EscapeKey(key), string.Empty, true);
         }
 
         public void SaveDepartments(ICollection<DepartmentRow> departments)
@@ -148,25 +148,7 @@ namespace civilsalary.data
                     {
                         var ctx = CreateContext();
 
-                        var existing = ctx.LoadObjects<T>(entitySetName, batch.Select(e => Tuple.Create(e.PartitionKey, e.RowKey)));
-
-                        var joined = from b in batch
-                                     join e in existing on new { b.PartitionKey, b.RowKey } equals new { e.PartitionKey, e.RowKey } into existingGroup
-                                     from e in existingGroup.DefaultIfEmpty()
-                                     select new { toSave = b, existing = e };
-
-                        foreach (var j in joined)
-                        {
-                            if (j.existing != null)
-                            {
-                                ctx.AttachTo(entitySetName, j.toSave);
-                                ctx.UpdateObject(j.toSave);
-                            }
-                            else
-                            {
-                                ctx.AddObject(entitySetName, j.toSave);
-                            }
-                        }
+                        ctx.AddOrUpdateObjects(entitySetName, batch);
 
                         ctx.SaveChanges(SaveChangesOptions.Batch);
                     }
@@ -182,17 +164,23 @@ namespace civilsalary.data
 
         public DepartmentRow LoadDepartment(string governmentKey, string departmentKey)
         {
-            throw new NotImplementedException();
+            var ctx = CreateContext();
+
+            return ctx.LoadObject<DepartmentRow>(DepartmentsTable, SecUtility.EscapeKey(governmentKey), SecUtility.EscapeKey(departmentKey), true);
         }
 
         public IQueryable<GovernmentAssociationRow> LoadGovernmentAssociations()
         {
-            throw new NotImplementedException();
+            var ctx = CreateContext();
+
+            return ctx.CreateQuery<GovernmentAssociationRow>(GovernmentAssocationsTable);
         }
 
         public IQueryable<DepartmentRow> LoadDepartments(string governmentKey)
         {
-            throw new NotImplementedException();
+            var ctx = CreateContext();
+
+            return ctx.CreateQuery<DepartmentRow>(DepartmentsTable);
         }
     }
 }

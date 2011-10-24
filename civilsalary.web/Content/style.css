@@ -31,7 +31,7 @@ audio[controls], canvas, video { display: inline-block; *display: inline; *zoom:
 
 html { font-size: 100%; overflow-y: scroll; -webkit-overflow-scrolling: touch; -webkit-tap-highlight-color: rgba(0,0,0,0); -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
 
-body { margin: 0; font-size: 13px; line-height: 1.231; }
+body { margin: 0; font-size: 17px; line-height: 1.4; }
 
 body, button, input, select, textarea { font-family: sans-serif; color: #222; }
 
@@ -201,10 +201,35 @@ table { border-collapse: collapse; border-spacing: 0; }
    Author: 
    ========================================================================== */
 
+a.link-button 
+{
+	display: inline-block;
+	text-decoration: none;
+	padding: 7px;
+	
+	border: 1px solid #ff0000;
+	color: #ff0000;
+	background-color: #eeeeee;
+}
 
+a.link-button:visited
+{
+	border: 1px solid #cccccc;
+	color: #000000;
+}
 
+a.link-button:hover
+{
+	border: 1px solid #000099;
+	color: #000099;
+}
 
-
+a.link-button:active
+{
+	border: 1px solid #000099;
+	background-color: #0000cc;
+	color: #ffffff;
+}
 
 
 

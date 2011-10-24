@@ -34,6 +34,11 @@ namespace GoogleVisualization
         //{
         //}
 
+        public static GoogleChartDataSourceResult Create<T>(IEnumerable<T> data, string tqx, IDictionary<string, object> additionalProperties)
+        {
+            return new GoogleChartDataSourceResult(data, typeof(T), tqx, additionalProperties);
+        }
+
         public GoogleChartDataSourceResult(IEnumerable data, Type elementType, string tqx, IDictionary<string, object> additionalProperties)
         {
             var parameters = tqx.SplitDictionary(";", ":");

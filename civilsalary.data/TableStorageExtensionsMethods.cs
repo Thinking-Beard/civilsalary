@@ -10,15 +10,22 @@ namespace civilsalary.data
 {
     static class TableStorageExtensionsMethods
     {
-        public static void AddOrUpdateObjects(this TableServiceContext context, string entitySetName, IEnumerable<object> entities)
+        public static void AddOrUpdateObjects<T>(this TableServiceContext context, string entitySetName, ICollection<T> entities) where T : TableServiceEntity
         {
-            foreach (var e in entities)
+            var existing = LoadObjects<T>(context, entitySetName, entities.Select(e => Tuple.Create(e.PartitionKey, e.RowKey)), true);
+
+            var joined = from entity in entities
+                         join exist in existing on new { entity.PartitionKey, entity.RowKey } equals new { exist.PartitionKey, exist.RowKey } into joinedExisting
+                         from exist in joinedExisting.DefaultIfEmpty()
+                         select new { entity, existing = exist };
+
+            foreach (var j in joined)
             {
-                AddOrUpdateObjectInternal(context, entitySetName, e);
+                AddOrUpdateObjectInternal<T>(context, entitySetName, j.entity, j.existing);
             }
         }
 
-        public static ICollection<T> LoadObjects<T>(this TableServiceContext context, string entitySetName, IEnumerable<Tuple<string,string>> keys) where T : TableServiceEntity
+        public static ICollection<T> LoadObjects<T>(this TableServiceContext context, string entitySetName, IEnumerable<Tuple<string,string>> keys, bool detach) where T : TableServiceEntity
         {
             var existing = new List<T>();
 
@@ -47,24 +54,45 @@ namespace civilsalary.data
                 existing.AddRange(query);
             }
 
+            if (detach)
+            {
+                context.DetachAll(existing);
+            }
+
             return existing;
         }
 
-        public static T LoadObject<T>(this TableServiceContext context, string entitySetName, string partitionKey, string rowKey) where T : TableServiceEntity
+        public static T LoadObject<T>(this TableServiceContext context, string entitySetName, string partitionKey, string rowKey, bool detach) where T : TableServiceEntity
         {
-            return context.CreateQuery<T>(entitySetName).Where(e => 1 == 1 && e.PartitionKey == partitionKey && e.RowKey == rowKey).SingleOrDefault();
+            var entity = context.CreateQuery<T>(entitySetName).Where(e => 1 == 1 && e.PartitionKey == partitionKey && e.RowKey == rowKey).SingleOrDefault();
+
+            if (detach)
+            {
+                context.Detach(entity);
+            }
+
+            return entity;
         }
 
-        public static void AddOrUpdateObject(this TableServiceContext context, string entitySetName, object entity)
+        public static void AddOrUpdateObject<T>(this TableServiceContext context, string entitySetName, T entity) where T : TableServiceEntity
         {
-            AddOrUpdateObjectInternal(context, entitySetName, entity);
+            var existingObject = LoadObject<T>(context, entitySetName, entity.PartitionKey, entity.RowKey, true);
+
+            AddOrUpdateObjectInternal<T>(context, entitySetName, entity, existingObject);
         }
 
-        static void AddOrUpdateObjectInternal(this TableServiceContext context, string entitySetName, object entity)
+        static void AddOrUpdateObjectInternal<T>(this TableServiceContext context, string entitySetName, T entity, T existingEntity) where T : TableServiceEntity
         {
-            context.Detach(entity);
-            context.AttachTo(entitySetName, entity, "*");
-            context.UpdateObject(entity);
+			if (existingEntity == null)
+            {
+                context.AddObject(entitySetName, entity);
+            }
+            else
+            {
+	            context.Detach(entity);
+	            context.AttachTo(entitySetName, entity, "*");
+	            context.UpdateObject(entity);
+			}
         }
 
         public static bool CreateTableIfNotExist<T>(this CloudTableClient tableStorage, string entityName) where T : TableServiceEntity, new()
@@ -78,6 +106,14 @@ namespace civilsalary.data
                     entityName, new T());
             }
             return result;
+        }
+
+        public static void DetachAll(this TableServiceContext context, IEnumerable<object> entities)
+        {
+            foreach (var e in entities)
+            {
+                context.Detach(e);
+            }
         }
 
         private static void InitializeTableSchemaFromEntity(CloudTableClient tableStorage, string entityName, TableServiceEntity entity)
