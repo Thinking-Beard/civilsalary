@@ -41,6 +41,9 @@ namespace GoogleVisualization
         public static Query Parse(string query)
         {
             var q = new Query();
+
+            if (string.IsNullOrWhiteSpace(query)) return q;
+
             var lastStart = query.Length;
 
             //iterate in reverse because need to know where next clause ends to pull body

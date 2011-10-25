@@ -66,7 +66,7 @@ namespace civilsalary.datasync
 
                 repository.SaveGovernments(g);
 
-                var departmentGroups = employeeData.GroupBy(e => e.DepartmentName);
+                var departmentGroups = employeeData.GroupBy(e => e.DepartmentKey);
 
                 var departments = departmentGroups.Select(dept =>
                 {
@@ -75,8 +75,8 @@ namespace civilsalary.datasync
                     var department = new DepartmentRow()
                     {
                         GovernmentKey = p.GovernmentKey,
-                        Key = dept.Key.ToUrlValue(),
-                        Name = dept.Key
+                        Key = dept.Key,
+                        Name = departmentEmployeeData[0].DepartmentName
                     };
 
                     var departmentEmployees = departmentEmployeeData.Select(data => data.Row).ToList();

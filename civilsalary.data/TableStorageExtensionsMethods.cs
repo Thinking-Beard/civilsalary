@@ -66,7 +66,7 @@ namespace civilsalary.data
         {
             var entity = context.CreateQuery<T>(entitySetName).Where(e => 1 == 1 && e.PartitionKey == partitionKey && e.RowKey == rowKey).SingleOrDefault();
 
-            if (detach)
+            if (detach && entity != null)
             {
                 context.Detach(entity);
             }

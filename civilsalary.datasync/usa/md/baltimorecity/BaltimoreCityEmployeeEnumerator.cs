@@ -74,6 +74,7 @@ namespace civilsalary.datasync.usa.md.baltimorecity
                 _current = new EmployeeData()
                 {
                     DepartmentName = ((string)currentValues[ColumnIndex("agency")]).Trim(),
+                    DepartmentKey = ((string)currentValues[ColumnIndex("agency")]).Trim().ToUrlValue(),
                     Row = new EmployeeRow()
                     {
                         GovernmentKey = _government,

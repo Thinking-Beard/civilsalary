@@ -37,6 +37,7 @@
       <HintPath>..\packages\Newtonsoft.Json.4.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Abstractions" />
@@ -58,6 +59,7 @@
     <Compile Include="Query.cs" />
     <Compile Include="QueryableExtensions.cs" />
     <Compile Include="QueryResult.cs" />
+    <Compile Include="TreeMapModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

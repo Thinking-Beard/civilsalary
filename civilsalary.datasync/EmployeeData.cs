@@ -10,5 +10,6 @@ namespace civilsalary.datasync
     {
         public EmployeeRow Row { get; set; }
         public string DepartmentName { get; set; }
+        public string DepartmentKey { get; set; }
     }
 }

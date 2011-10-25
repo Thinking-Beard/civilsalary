@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using System.Text;
 using System.ComponentModel.DataAnnotations;
 
-namespace civilsalary.web.Models
+namespace GoogleVisualization
 {
     public class TreeMapModel
     {

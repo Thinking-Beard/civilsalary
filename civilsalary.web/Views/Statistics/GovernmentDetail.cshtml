@@ -1,0 +1,78 @@
+﻿@model StatisticsDetailModel
+
+@{
+    ViewBag.Title = Model.Government.Name;
+}
+
+<div>
+    <span>Employees</span>
+    <span>@Html.DisplayTextFor(m => m.Government.EmployeeCount)</span>
+</div>
+
+<table style="width:100%">
+    <thead>
+        <th>&nbsp;</th>
+        <th>Total</th>
+        <th>Maximum</th>
+        <th>Average</th>
+        <th>Median</th>
+        <th>Minimum</th>
+    </thead>
+    <tbody>
+        <tr>
+            <th>Salary</th>
+            <td>@Html.DisplayFor(m => m.Government.SalarySum)</td>
+            <td>@Html.DisplayFor(m => m.Government.SalaryMax)</td>
+            <td>@Html.DisplayFor(m => m.Government.SalaryAvg)</td>
+            <td>@Html.DisplayFor(m => m.Government.SalaryMed)</td>
+            <td>@Html.DisplayFor(m => m.Government.SalaryMin)</td>
+        </tr>
+        <tr>
+            <th>Gross Pay</th>
+            <td>@Html.DisplayFor(m => m.Government.GrossPaySum)</td>
+            <td>@Html.DisplayFor(m => m.Government.GrossPayMax)</td>
+            <td>@Html.DisplayFor(m => m.Government.GrossPayAvg)</td>
+            <td>@Html.DisplayFor(m => m.Government.GrossPayMed)</td>
+            <td>@Html.DisplayFor(m => m.Government.GrossPayMin)</td>
+        </tr>
+    </tbody>
+</table>
+
+<div>
+    <div id="departmentPieChart" style="position: absolute; left: 100px; right: 100px; height: 1000px; margin-top: -150px; z-index: -1000">Loading...</div>
+</div>
+
+@section ScriptContent 
+{
+    <script src="https://www.google.com/jsapi"></script>
+    <script>
+        google.load("visualization", "1", { packages: ['corechart'] });
+        google.setOnLoadCallback(function () {
+            var query = new google.visualization.Query('/data/statistics/departments/@Model.Government.Key');
+            var pieDataTable;
+            var addListener = google.visualization.events.addListener;
+
+            query.send(function (response) {
+                dataTable = response.getDataTable();
+
+                var view = new google.visualization.DataView(dataTable);
+                view.setColumns(@Json.Encode(GoogleVisualizationExtensions.GetColumnsIndicies<DepartmentRow>(m => m.Name, m => m.SalarySum)));
+
+                var pie = new google.visualization.PieChart($('#departmentPieChart')[0]);
+                pie.draw(view, {
+                    pieSliceText: 'none',
+                    legend: 'left',
+                    is3D: true
+                });
+
+                addListener(pie, 'select', function() {
+                    var selection = pie.getSelection();
+                    var tableRowIndex = view.getTableRowIndex(selection[0].row);
+                    var key = dataTable.getValue(tableRowIndex, @(GoogleVisualization.GoogleVisualizationExtensions.GetColumnIndex<DepartmentRow>(m => m.Key)));
+
+                    window.location.href = '/statistics/@Model.Government.Key/department/' + key;
+                });
+            });
+        });
+    </script>
+}
